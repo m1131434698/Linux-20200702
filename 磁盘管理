@@ -1,20 +1,18 @@
 1.  存储基础知识
+/dev/sda
+/dev设备文件目录
+s：sata串口
+d：disk
+a：第一块
+
 从工作原理分：
 机械  HDD
 固态  SSD
-
-从kernel对不同接口硬盘命名方式：
-OS		        IDE（并口）	　　　　SATA（串口）		  SCSI			
-RHEL5	 　　　　/dev/hda		　　　　/dev/sda				/dev/sda		
-RHEL6	 　　　　/dev/sda		　　　　/dev/sda				/dev/sda
-RHEL7	 　　　　/dev/sda		　　　　/dev/sda				/dev/sda
-KVM      　　　/dev/vda（半虚拟化驱动）
-　　　   　 　 /dev/sda（全虚拟化驱动）
            
 从分区方式区分：
-存储大小			分区软件		分区表
-2TB以下的硬盘		fdisk/parted/	MSDOS(MBR) 
-2TB以上的硬盘		parted		GPT
+存储大小			 分区软件		        分区表
+2TB以下的硬盘		           fdisk/parted/	          MSDOS(MBR) 
+2TB以上的硬盘		           parted		          GPT
 注意：从MBR转到GPT，或从GPT转换到MBR会导致数据全部丢失！
 MSDOS(MBR)分区的限制：
 主引导分区（Master Boot Record，缩写：MBR），又叫做主引导扇区，是计算机开机后访问硬盘时所必须要读取的首个扇区。
@@ -26,6 +24,8 @@ GPT的限制：没有限制
 
 2.  磁盘分区
 2.1 磁盘管理相关命令
+管理三部曲：分区、格式化、挂载
+查看磁盘：ll /dev/sd*
 2.2.1 fdisk分区工具
 fdisk是一个创建和维护分区表的程序，它兼容DOS类型的分区表、BSD或者SUN类型的磁盘列表。
 语法：fdisk [必要参数][选择参数]
