@@ -1,0 +1,169 @@
+第一章：LINUX基本操作
+1.1文件管理
+ls	-l
+ls -l  =  ll
+文件详细信息：
+	drwxrwxr-x. 	2 	root	root	6 	7月   2 09:06 	file1
+	类型和权限	链接	属主	属组	大小	创建时间		文件名
+	-文件	d目录
+	rwx  rwx  r-x	
+	属主 属组 其他人
+pwd
+cd
+touch
+mkdir	-pv	｛../{},../{},..｝
+cp	-r
+mv
+rm	-rf	*、d* 
+cat	head、more、tail、grep
+vim	:wq	i、d、y、p、u	hjkl 0 $ gg 3G /string（n\N）
+>
+gedit 
+
+
+1.2用户管理
+1.2.1用户/组基本概念	
+
+用户基本信息文件
+ect/passwd	
+root:x:0:0:root:/root:/bin/bash	
+用户名:x(密码占位符):uid(0，特权；1_499，系统；1000+，普通)：gid（group id）：描述：HOME：shell
+
+用户密码信息文件
+etc/shadow
+用户名：$加密算法$密码加密值：最后一次修改时间：最小间隔：最大时间间隔：警告时间：不活动时间：失效时间：保留
+
+组文件信息
+etc/group
+组名：组密码：组ID：组成员
+
+1.2.2用户/组管理
+useradd userid	-u（uid）	-d（家目录）
+id userid
+passwd userid
+userdel		--help
+usermod		-g（基本组）		-G（附加组）
+groupadd
+groupdel
+groupmod	-g
+gpasswd	-d userid groupid
+
+1.2.3提权
+/etc/sudoers
+永久提权：switching users with su
+临时提权：running commands as root with sudo	root给用户授权（id 场景 可用命令）	用户用sudo
+
+1.3用户权限
+1.3.1基本权限UGO	
+授权对象：u(user)、g(group)、o(other)、特殊对象a（all）	
+赋值符：+、-、=
+权限类型：读：r=4；写：w=2；执行：x=1；u=7（特殊，用户获得全部权限）； （特殊，空格=无权限）
+bash 1.txt##执行命令
+echo ""##输出文本
+
+设置权限：
+	更改权限：	chmod 	u+r 		1.txt		-R
+			命令     	对象加减权限	文件或目录	(递归)对目录及子文件全部授权
+			chmod	670		1.txt		
+				u、g、o分别赋值
+	更改属主、属组：	chown	root.root		1.txt
+				root属主  .root属组
+			chgrp	root		1.txt
+
+1.3.2基本权限ACL(access control list）
+getfacl	/home/test.txt
+setfavl		-m	g:user01:rwx
+		-x（删除某用户acl）
+		-b（删除全部acl）
+watch -n1 'ls -dl /tmp/file1'
+
+1.3.3特殊权限
+suid
+chmod	u+s	file1
+sgid
+chmod	g+s	file1
+sticky
+chmod	o+t	file1
+查看特殊权限
+lsattr
+设置特殊权限
+chattr	+i     #锁定文件，不能编辑，不能修改，不能删除，不能移动，可以执行
+    	+a     #仅可以追加文件，不能编辑，不能删除，不能移动，可以执行
+进程掩码umask
+umask涉及到的相关文件/etc/bashrc /etc/profile ~/.bashrc ~/.bash_profile
+
+1.4进程管理
+1.4.1进程管理
+进程组成部分：一个文件；已分配内存的地址空间；安全属性，包括所有权凭据和特权；程序代码的一个或多个副本（执行线程）；进程状态
+
+程序————————进程
+硬盘		  内存
+		  内存资源、CPU资源（时间分片）、网络资源……
+
+
+进程状态管理器
+静态查看进程
+ps（process status）	-A	-a	-u	aux	-ef（PID、PPID父进程PID）
+USER		PID	CPU	MEM		VSZ		RSS	TTY		STAT	START		TIME		COMMAND
+进程拥有者	进程ID	占用率	内存占用率	虚拟内存占用大小	内存占用	运行终端的号码	进程状态	进程开始时间	累计使用CPU时间	进程文件，进程名
+
+进程排序
+[root@localhost~]# ps aux --sort %cpu |less
+[root@localhost~]# ps aux --sort -%cpu |less
+
+自定义显示字段
+[root@localhost~]# ps axo user,pid,ppid,%mem,command | head -3
+
+STAT状态      
+      R     运行
+      S     可中断睡眠 Sleep
+      D     不可中断睡眠
+      T     停止的进程 
+      Z     僵尸进程
+      X     死掉的进程
+      
+      Ss     s进程的领导者，父进程
+      S< 　　 <优先级较高的进程
+      SN     N优先级较低的进程
+      R+      +表示是前台的进程组
+      Sl     以线程的方式运行    
+
+动态查看进程
+top
+top - 09:34:37 up 10:06,  2 users,  load average: 0.05, 0.04, 0.05
+程序名-系统事件 运行时间 登录用户数 CPU负载：5 10 15分钟
+Tasks: 211 total,   2 running, 209 sleeping,   0 stopped,   0 zombie
+总进程数，运行数，睡眠数，停止数，僵死数
+%Cpu(s):  3.7 us,  1.4 sy,  0.0 ni, 94.6 id,  0.0 wa,  0.0 hi,  0.3 si,  0.0 st
+CPU占用率
+KiB Mem :   995684 total,    81388 free,   670160 used,   244136 buff/cache
+物理内存
+KiB Swap:  2097148 total,  1985788 free,   111360 used.   139676 avail Mem 
+交换分区
+PID	USER	PR	NI	VIRT	RES	SHR	S	%CPU	%MEM	TIME+	COMMAND
+		优先级	优先级	内		   存	状态			
+
+进程优先级nice
+
+使用信号控制进程
+kill、killall、pkill、stop
+
+[root@localhost~]# kill -l      //列出所有支持的信号（常用9和15）
+编号 信号名
+1) SIGHUP            	 重新加载配置
+2) SIGINT            	 键盘中断^C
+3) SIGQUIT        　	 键盘退出
+9) SIGKILL            	 强制终止
+15) SIGTERM        　  终止（正常结束），缺省信号
+18) SIGCONT        　  继续
+19) SIGSTOP           　停止
+20)SIGTSTP      　　　 暂停^Z
+
+1.4.2作业管理
+作业控制是一个命令行功能，允许一个shell 实例来运行和管理多个命令。
+如果没有作业控制，父进程fork()一个子进程后，将sleeping，直到子进程退出。
+使用作业控制，可以选择性暂停，恢复，以及异步运行命令，让 shell 可以在子进程运行期间返回接受其他命令。
+
+1.4.3虚拟文件系统
+
+1.5管道与重定向
