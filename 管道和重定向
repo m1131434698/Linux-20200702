@@ -1,52 +1,37 @@
 Linux-I/O重定向和管道
 Linux I/O重定向
+
+file descriptors（FD，文件描述符 或 Process I/O channels）;
 标准输入（stdin）：文件描述符0
 标准输入（stdout）：文件描述符1
 标准错误（stderr）：文件描述符2
-
-file descriptors（FD，文件描述符 或 Process I/O channels）;
-
+普通文件：3+
 进程使用文件描述符来管理打开的文件
-
 查看文件fd
 [root@centos7-1 ~]# ls /proc/$$/fd  ##$$为进程PID
 0  1  2  4
 
+输出重定向：
 正确输出：1>  1>>  等价于 > >>
 错误输出：2>  2>>
-
 输出重定向（覆盖）
 [root@centos7-1 ~]# date 1> date.txt
-
 输出重定向（追加）
 [root@centos7-1 ~]# date >> date.txt
-
-
 错误输出重定向#
 [root@centos7-1 ~]# ls /home/ /aaaa >list.txt
 ls: 无法访问/aaaa: 没有那个文件或目录
 [root@centos7-1 ~]# ls /home/ /aaaa >list.txt 2>err.txt      //重定向到不同的位置
-
-
 正确和错误都输出到相同位置 &>#
 [root@centos7-1 ~]# ls /home/ /aaaa &>list.txt          //混合输出
-
-
 正确和错误都输出到相同位置 2>&1#
 [root@centos7-1 ~]# ls /home/ /aaaa >list.txt 2>&1        //重定向到相同的位置
-
-
 重定向到空设备/dev/null#
 [root@centos7-1 ~]# ls /home/ /aaaa >list.txt 2>/dev/null     //空设备，即将产生的输出丢掉
-
 [root@centos7-1 ~]# ls /home/ /aaaa &>/dev/null     //空设备，即将产生的输出丢掉
-
-
 /dev/null 补充#
 /dev/null：是一个空设备，黑洞，任何文件都可以扔进去，但是看不见
-
 如果/dev/null设备被删除怎么办？ rm -f /dev/null
-
 1、手动创建
 # mknod -m 666 /dev/null c 1 3 
 [root@centos7-1 ~]# ll /dev/null /dev/zero 
