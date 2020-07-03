@@ -1,0 +1,133 @@
+1.  存储基础知识
+从工作原理分：
+机械  HDD
+固态  SSD
+
+从kernel对不同接口硬盘命名方式：
+OS		        IDE（并口）	　　　　SATA（串口）		  SCSI			
+RHEL5	 　　　　/dev/hda		　　　　/dev/sda				/dev/sda		
+RHEL6	 　　　　/dev/sda		　　　　/dev/sda				/dev/sda
+RHEL7	 　　　　/dev/sda		　　　　/dev/sda				/dev/sda
+KVM      　　　/dev/vda（半虚拟化驱动）
+　　　   　 　 /dev/sda（全虚拟化驱动）
+           
+从分区方式区分：
+存储大小			分区软件		分区表
+2TB以下的硬盘		fdisk/parted/	MSDOS(MBR) 
+2TB以上的硬盘		parted		GPT
+注意：从MBR转到GPT，或从GPT转换到MBR会导致数据全部丢失！
+MSDOS(MBR)分区的限制：
+主引导分区（Master Boot Record，缩写：MBR），又叫做主引导扇区，是计算机开机后访问硬盘时所必须要读取的首个扇区。
+MBR（512字节）=446字节（存放grub指针）+64字节（分区表）+2字节（校验位）
+主分区，扩展分区，逻辑分区
+只支持4个主分区，总分区数不能超过15个
+只支持2TB以下的硬盘
+GPT的限制：没有限制
+
+2.  磁盘分区
+2.1 磁盘管理相关命令
+2.2.1 fdisk分区工具
+fdisk是一个创建和维护分区表的程序，它兼容DOS类型的分区表、BSD或者SUN类型的磁盘列表。
+语法：fdisk [必要参数][选择参数]
+必要参数：-l 列出素所有分区表      -u 与"-l"搭配使用，显示分区数目
+选择参数：-s<分区编号> 指定分区    -v 版本信息
+菜单操作说明：
+a   toggle a bootable flag                  --设置启动分区
+b   edit bsd disklabel                      --编辑分区标签
+d   delete a partition                      --删除一个分区
+l   list known partition types              --列出分区类型
+m   print this menu                         --帮助
+n   add a new partition                     --建立一个新的分区
+o   create a new empty DOS partition table  --创建一个新的空白DOS分区表
+p   print the partition table               --打印分区表
+q   quit without saving changes             --退出不保存设置
+t   changea partition's system id           --改变分区的类型
+u   changedisplay/entry units               --改变显示的单位
+v   verifythe partition table               --检查验证分区表
+w   write table to disk and exit            --保存分区表
+
+2.1.2 lsblk查看块设备
+lsblk用于列出所有可用块设备的信息，而且还能显示他们之间的依赖关系，但是它不会列出RAM盘的信息。块设备有硬盘，闪存盘，cd-ROM等等。
+-a, --all            显示所有设备。
+-b, --bytes          以bytes方式显示设备大小。
+-d, --nodeps         不显示 slaves 或 holders。
+-D, --discard        print discard capabilities。
+-e, --exclude <list> 排除设备 (default: RAM disks)。
+-f, --fs             显示文件系统信息。
+-h, --help           显示帮助信息。
+-i, --ascii          use ascii characters only。
+-m, --perms          显示权限信息。
+-l, --list           使用列表格式显示。
+-n, --noheadings     不显示标题。
+-o, --output <list>  输出列。
+-P, --pairs          使用key="value"格式显示。
+-r, --raw            使用原始格式显示。
+-t, --topology       显示拓扑结构信息。
+
+2.1.3 partprobe刷新授权表
+partprobe命令用于重读分区表，当出现删除文件后，出现仍然占用空间。可以partprobe在不重启的情况下重读分区。
+-d：不更新内核；
+-s：显示摘要和分区；
+-h：显示帮助信息；
+-v：显示版本信息。
+
+2.1.4 blkid 查看设备UUID
+在Linux下可以使用blkid命令对查询设备上所采用文件系统类型进行查询。blkid主要用来对系统的块设备（包括交换分区）所使用的文件系统类型、LABEL、UUID等信息进行查询。要使用这个命令必须安装e2fsprogs软件包。
+
+2.2 磁盘分区示例
+1、需要有一块硬盘
+2、使用分区工具对硬盘进行分区（fdisk）
+3、格式化分区
+4、挂载使用
+进入分区表 新建分区
+更新分区表（刷新分区表）
+格式化
+挂载
+
+3.  磁盘挂载与卸载
+单一文件系统不应该被重复挂载在不同的挂载点(目录)中；
+单一目录不应该重复挂载多个文件系统；
+要作为挂载点的目录，理论上应该都是空目录才是。
+如果你要用来挂载的目录里面并不是空的，那么挂载了文件系统之后，原目录下的东西就会暂时的消失。 
+举个例子来说，假设你的 /home 原本与根目录 (/) 在同一个文件系统中，底下原本就有 /home/test 与 /home/vbird 两个目录。
+然后你想要加入新的硬盘，并且直接挂载 /home 底下，那么当你挂载上新的分割槽时，则 /home 目录显示的是新分割槽内的数据，至于原先的 test 与 vbird 这两个目录就会暂时的被隐藏掉了！
+注意：并不是被覆盖掉， 而是暂时的隐藏了起来，等到新分割槽被卸除之后，则 /home 原本的内容就会再次的跑出来啦！
+mount [-t 文件系统]  [-o 额外选项]  装置文件名  挂载点
+-a  ：依照配置文件 /etc/fstab 的数据将所有未挂载的磁盘都挂载上来
+-l  ：单纯的输入 mount 会显示目前挂载的信息。加上 -l 可增列 Label 名称！
+-t  ：与 mkfs 的选项非常类似的，可以加上文件系统种类来指定欲挂载的类型。
+      常见的 Linux 支持类型有：ext2, ext3, vfat, reiserfs, iso9660(光盘格式),
+      nfs, cifs, smbfs(此三种为网络文件系统类型)
+-n  ：在默认的情况下，系统会将实际挂载的情况实时写入 /etc/mtab 中，以利其他程序
+      的运行。但在某些情况下(例如单人维护模式)为了避免问题，会刻意不写入。
+      此时就得要使用这个 -n 的选项了。
+-L  ：系统除了利用装置文件名 (例如 /dev/hdc6) 之外，还可以利用文件系统的标头名称
+      (Label)来进行挂载。最好为你的文件系统取一个独一无二的名称吧！
+-o  ：后面可以接一些挂载时额外加上的参数！比方说账号、密码、读写权限等：
+    rw           读写
+    ro           只读
+    suid         支持suid
+    dev          支持设备文件
+    nodev        不支持设备文件
+    noexec       不允许执行二进制文件
+    exec         允许执行二进制文件
+    auto         mount -a 开机自动挂载
+    noauto       mount -a 开机不自动挂载
+    async        异步写入
+    sync         同步同入
+    noatime      不更新访问时间atime
+    usrquota     支持用户级磁盘配额功能
+    grpquota     支持组级磁盘配额功能
+    acl          支持acl功能
+    remount      在线重新挂载
+    pri          指定优先级
+    
+3.1 挂载IOS文件
+
+3.2 开机自动挂载
+
+3.3 Automount自动挂载
+
+3.3.1 本地挂载
+
+3.3.2 远程挂载NFS
