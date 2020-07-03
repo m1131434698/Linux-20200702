@@ -163,5 +163,13 @@ kill、killall、pkill、stop
 作业控制是一个命令行功能，允许一个shell 实例来运行和管理多个命令。
 如果没有作业控制，父进程fork()一个子进程后，将sleeping，直到子进程退出。
 使用作业控制，可以选择性暂停，恢复，以及异步运行命令，让 shell 可以在子进程运行期间返回接受其他命令。
+jobs	查看后台信息
+foreground 	fg
+background	bg
+kill %1	杀死后台序号位1的进程
 
 1.4.3虚拟文件系统
+简介：采集服务器自身内核、进程运行的状态信息
+cpu：/proc/cpuinfo
+内存：/proc/memifo
+内核：/proc/cmdline
