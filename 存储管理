@@ -1,14 +1,10 @@
 1.  存储基础知识
 /dev/sda
-/dev设备文件目录
-s：sata串口
-d：disk
-a：第一块
+/dev设备文件目录 s：sata串口 d：disk a：第一块
 
 从工作原理分：
-机械  HDD
-固态  SSD
-           
+机械  HDD    固态  SSD
+
 从分区方式区分：
 存储大小			 分区软件		        分区表
 2TB以下的硬盘		           fdisk/parted/	          MSDOS(MBR) 
@@ -18,8 +14,7 @@ MSDOS(MBR)分区的限制：
 主引导分区（Master Boot Record，缩写：MBR），又叫做主引导扇区，是计算机开机后访问硬盘时所必须要读取的首个扇区。
 MBR（512字节）=446字节（存放grub指针）+64字节（分区表）+2字节（校验位）
 主分区，扩展分区，逻辑分区
-只支持4个主分区，总分区数不能超过15个
-只支持2TB以下的硬盘
+只支持4个主分区，总分区数不能超过15个，只支持2TB以下的硬盘
 GPT的限制：没有限制
 
 2.  磁盘分区
@@ -27,10 +22,9 @@ GPT的限制：没有限制
 管理三部曲：分区、格式化、挂载
 查看磁盘：ll /dev/sd*
 
-2.2.1 fdisk分区工具
+2.2 fdisk  分区工具
 fdisk是一个创建和维护分区表的程序，它兼容DOS类型的分区表、BSD或者SUN类型的磁盘列表。
 fdisk /dev/sdb
-菜单操作说明：
 a   toggle a bootable flag                  --设置启动分区
 b   edit bsd disklabel                      --编辑分区标签
 d   delete a partition                      --删除一个分区
@@ -45,55 +39,57 @@ u   changedisplay/entry units               --改变显示的单位
 v   verifythe partition table               --检查验证分区表
 w   write table to disk and exit            --保存分区表
 
-2.1.2 lsblk查看块设备
-lsblk用于列出所有可用块设备的信息，而且还能显示他们之间的依赖关系，但是它不会列出RAM盘的信息。块设备有硬盘，闪存盘，cd-ROM等等。
--a, --all            显示所有设备。
--b, --bytes          以bytes方式显示设备大小。
--d, --nodeps         不显示 slaves 或 holders。
--D, --discard        print discard capabilities。
--e, --exclude <list> 排除设备 (default: RAM disks)。
--f, --fs             显示文件系统信息。
--h, --help           显示帮助信息。
--i, --ascii          use ascii characters only。
--m, --perms          显示权限信息。
--l, --list           使用列表格式显示。
--n, --noheadings     不显示标题。
--o, --output <list>  输出列。
--P, --pairs          使用key="value"格式显示。
--r, --raw            使用原始格式显示。
--t, --topology       显示拓扑结构信息。
+2.3 lsblk  查看块设备
 
-
-2.1.3 partprobe刷新授权表
-partprobe命令用于重读分区表，当出现删除文件后，出现仍然占用空间。可以partprobe在不重启的情况下重读分区。
+2.4 partprobe 刷新授权表
 partprobe /dev/sdb
--d：不更新内核；
--s：显示摘要和分区；
--h：显示帮助信息；
--v：显示版本信息。
 
-2.1.4 blkid 查看设备UUID
-在Linux下可以使用blkid命令对查询设备上所采用文件系统类型进行查询。blkid主要用来对系统的块设备（包括交换分区）所使用的文件系统类型、LABEL、UUID等信息进行查询。要使用这个命令必须安装e2fsprogs软件包。
+2.5 blkid  查看设备UUID
 
-2.1.5查看磁盘占用
-df         -hT
+2.6 df     查看磁盘占用
 
-2.1.6 创建文件系统
+2.7 mkfs   创建文件系统
 mkfs.ext4  /dev/sdb1
 make file system extend4
 创建 文件 系统    扩展
 
-2.1.7  磁盘挂载与卸载
-单一文件系统不应该被重复挂载在不同的挂载点(目录)中；
-单一目录不应该重复挂载多个文件系统；
-要作为挂载点的目录，理论上应该都是空目录才是。
-如果你要用来挂载的目录里面并不是空的，那么挂载了文件系统之后，原目录下的东西就会暂时的消失。 
-举个例子来说，假设你的 /home 原本与根目录 (/) 在同一个文件系统中，底下原本就有 /home/test 与 /home/vbird 两个目录。
-然后你想要加入新的硬盘，并且直接挂载 /home 底下，那么当你挂载上新的分割槽时，则 /home 目录显示的是新分割槽内的数据，至于原先的 test 与 vbird 这两个目录就会暂时的被隐藏掉了！
-注意：并不是被覆盖掉， 而是暂时的隐藏了起来，等到新分割槽被卸除之后，则 /home 原本的内容就会再次的跑出来啦！
-mount [-t 文件系统]  [-o 额外选项]  装置文件名  挂载点
+2.8  mount 磁盘挂载与卸载
 mount -t ext4 /dev/sdb1 /mnt/disk1
+umount /dev/sdb5
 
 3. 逻辑卷LVM
 
-4. 交换分区管理
+3.1创建LVM
+pvcreate   /dev/sdf
+vgcreate   vg1                   /dev/sdf              ##创建物理卷
+lvcreate   -L 200M               -n lv2     vg1        ##创建卷组
+mkfs.ext4  /dev/vg1/lv1                                ##创建逻辑卷
+mkdir      /mnt/lv1
+mount      dev/vg1/lv1           /mnt/lv1
+
+3.2 VG、LV管理
+pvcreate /dev/sdg
+pvs                                                    ##查询pv 
+vgextend   vg1        /dev/sdg                         ##VG扩容
+vgs                                                    ##查询vg
+lvextend   -L +4G   /dev/vg1/lv1                       ##LV扩容
+df -Th                                                 ##查看文件系统当前容量
+resize2fs /dev/vg1/lv1                                 ##与上一次的分区大小对比
+
+
+4.交换分区管理
+free -m               ##查看分区
+mkswap /dev/sdc1      ##制作swap   
+swapon /dev/sdc1      ##swap分区激活
+
+5. 文件系统详情
+文件如何准确放到磁盘某个位置？
+文件如何快速定位读取
+
+LNIUX:ext4、btrfs、xfs
+
+6.文件链接
+
+7.RAID
+
+
