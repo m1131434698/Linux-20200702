@@ -87,9 +87,21 @@ swapon /dev/sdc1      ##swap分区激活
 文件如何快速定位读取
 
 LNIUX:ext4、btrfs、xfs
+inode：决定了文件数量，记录了文件的信息
+block：决定了文件大小
+df -i                 ##查看inode数量
+
 
 6.文件链接
+ln -s /tmp/1.txt  /root/桌面/1.txt                    ##创建软连接
+ln    /tmp/1.txt  /tmp/1-h2.txt                       ##创建硬链接，不能跨文件系统，不能对目录，基本不用
 
 7.RAID
-
+Redundant Array of Independent Disks
+廉价磁盘冗余阵列
+作用：容错、提升读写速率
+类型：
+RAID0
+RAID1：镜像集、2块磁盘、容量50%、读写速率一般、容错
+RAID5：数据盘、校验盘、热备盘，利用率（n-1），读写速率快，容错
 
