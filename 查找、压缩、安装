@@ -1,0 +1,23 @@
+查找
+which：命令查找
+find：文件查找,针对文件名
+locate：文件查找，依赖数据库
+alias：别名系统
+find /etc -name '1.txt'
+命令  路径  选项  描述
+find /etc/ -size +5M                      ##按大小
+find /  -maxdepth 4 -a -name ifcfg.en*    ##查找最大深度
+find /home -user user01                   ##按主人查找
+find /home -group user01                  ##按组查找
+find /dev -type f                         ##按文件类型查找，linux不以后缀作区分，以文件类型作区分
+find ./ -perm 644 -ls                     ##按文件权限查找，-ls是动作之一，精确权限
+找到之后的动作 
+-delete
+find /etc -name ifcfg* -ok        -cp -rvf {} /tmp \;
+                        中转符号   
+                        
+压缩
+tar -czf  etc.tar      /etc               ##z是gzip压缩，j是bzip压缩，J是xzip压缩
+    选项  压缩包名      源文件
+解压
+tar -xf  etc.tar
