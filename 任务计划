@@ -1,0 +1,42 @@
+1、一次性调度执行 at
+at  <TIMESPEC>
+
+<TIMESPEC>示例
+now +5min
+teatime tomorrow(16:00)
+noon  +4 days
+Spm august  3 2029
+4：00  2019-11-27
+
+at  now +5min                   ##设置时间
+at> useradd user02              ##创建任务
+at> <EOT>                       ##按CTRL+D结束
+atq                             ##查询任务
+
+2、循环调度执行   cron
+cron的概念与crontab是不可分割的
+该命令从标准输入设备读取指令，并将其存放于“crontab”文件之中，以供之后读取和执行
+
+查看进程状态
+      systemctl status crond.service
+      ps aux|grep crond                     ##crond程序运行是任务计划运行的根本
+
+示例：
+ls /var/spool/cron/                               ##任务计划存储位置
+crontab -e                ##Edit jobs for the current user         ##创建计划,超管可以用-u username管理其他用户的计划任务
+crontab -l                ##List the jobs for the current user     ##查询计划
+crontab -r                ##Remove all jobs for the current users  ##删除计划
+
+任务格式：
+* * * * * command         ##格式
+分 时 日 月 周 命令
+
+mail                              ##查看任务执行日志
+15 1 * * * * /mysql_back.sh       ##每天的1：15分执行任务
+15 * * * * * /mysql_back.sh       ##每个小时的15分执行任务
+*/5 * * * * /mysql_back.sh        ##每隔5min执行任务
+* * * * * /mysql_back.sh          ##每分钟执行任务
+0 * * * * /mysql_back.sh          ##整点执行任务
+
+
+
