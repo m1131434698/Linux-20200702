@@ -86,3 +86,14 @@ nginx-1.8.1.tar.gz
           /user/local/nginx/sbin/nginx
           systemctl stop firewall       ##关闭防火墙
           http://127.0.0.1              ##使用浏览器访问本机IP，如过出现NGINX的首页，说明部署成功
+          
+          
+          
+          
+          
+*3.3扩展内容
+1、清理原有YUM配置
+2、下载阿里官方配置（阿里巴巴开源镜像站）
+3、更新YUM仓库
+            yum makecache
+4、执行安装
