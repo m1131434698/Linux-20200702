@@ -80,3 +80,8 @@ nginx-1.8.1.tar.gz
           make
 6、安装
           make install
+7、访问
+          systemctl stop  httpd         ##防止tengine与httpd冲突
+          /user/local/nginx/sbin/nginx
+          systemctl stop firewall       ##关闭防火墙
+          http://127.0.0.1              ##使用浏览器访问本机IP，如过出现NGINX的首页，说明部署成功
