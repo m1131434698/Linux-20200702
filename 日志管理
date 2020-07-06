@@ -1,0 +1,45 @@
+1、日志进程rsyslogd
+
+处理日志的进程：
+第一类：rsyslogd：系统操作有关的信息，程序启动关闭信息，错误信息
+第二类：各类应用程序
+
+观察rsyslogd程序
+ps axu | grep rsyslogd
+
+常见的日志文件：
+tail -10 /var/log/messages              ##系统主日志文件，时间 主机名 消息
+tail -f /var/log/messages               ##动态查看日志文件的尾部
+tailf /var/log/secure                   ##认证、安全
+tail /var/log/yum.log                   ##yum
+tail /var/log/maillog                   ##邮件postfix有关
+tail /var/log/cron                      ##cron、at产生日志
+tail /var/log/dmesg                     ##系统启动相关
+
+rsyslogd配置
+        相关程序：yum install rsyslog logrotate        ##默认已安装
+        启动程序：systemctl start rsyslog.service      
+        相关文件：rpm -qc rsyslog    
+                 /etc/rsyslog.conf                    ##主配置文件
+                 /etc/syslconfig/rsyslog              ##相关文件，定义级别
+                 /ect/logrotate/syslog                ##与日志轮转（切割）相关
+                 
+RULES
+cron.*                          /var/log/cron
+设备  级别（越往下越低）          存放位置
+mail.*                          -/var/log/maillog     ##-为异步
+
+FACILITY
+grep  Facility /etc/ssh/sshd_config   ##设备类型起初就设置好的
+
+LEVEL
+        LOG_EMERG
+        LOG_ALERT
+        LOG_CRIT
+        LOG_ERR
+        LOG_WARNING
+        LOG_NOTICE
+        LOG_INFO                ##标准信息
+        LOG_DEBUG
+
+2、日志轮转logrotate
