@@ -38,6 +38,7 @@ mysql-comunity-cmmon-5.7.12-1.el7.x86_64.rpm
           name=dvd                        ##描述
           baseurl=file:///mnt/cdrom       ##下载地址，url统一资源定位符
           gpgcheck=0                      ##关闭校验
+          enable=1                        ##打开开关
           
   -挂载安装光盘
           光盘放到服务器上，通电
