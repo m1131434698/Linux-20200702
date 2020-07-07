@@ -43,3 +43,27 @@ LEVEL
         LOG_DEBUG
 
 2、日志轮转logrotate
+
+工作原理：按配置进行轮转
+                配置文件种类：
+                        主文件：    /etc/logrotate.conf
+                        子文件夹：  /etc/logrotate.d/*                ##自定义配置、方便管理
+主配置文件：
+weekly                          ##轮转周期，轮转周期有两个维度，时间和大小，达到一个就轮转
+rotate 4                        ##保留4份
+create                          ##轮转后创建新文件
+dateext                         ##以时间作为文件的扩展名
+#compress                       ##压缩
+include /etc/logrotate.d        ##包含该目录下的子配置文件
+/var/log/wtmp {                  ##对某日志文件设置轮转规则,优先级高
+monthly
+minsize 1M                      ##最小达到1M才能转
+create 0664 root utmp           ##轮转后创建新文件，并设置权限 
+rotate 1
+｝
+/var/log/btmp｛
+missingok                       ##丢失不提示
+monthly                         ##每月轮转1次
+create 0600 root utmp
+rotate 1
+｝
