@@ -1,1 +1,74 @@
-1. 网络接口名称规则
+网络接口名称规则
+eno1        ##代表由主板bios内置的网卡
+ens1        ##代表有主板bios内置的PCI-E网卡
+enp2s0      ##PCI-E独立网卡
+eth0        ##如果以上都不使用，则回到默认的网卡名
+
+lspci | grep -i eth         ##查看当前系统所连接的所有网卡
+mii-tool eht0               ##确认网线已连接好
+
+ifconfig  -a                ##查看所有网卡信息
+ifconfig  eth0              ##查看单个网卡信息
+ifconfig eth0 192.168.1.122 netmask 255.255.255.0     ##临时设定IP和掩码（马上生效，临时生效）
+ifconfig eth0：1 192.168.0.2 netmask 255.255.255.0    ##配置子接口
+
+网卡所在位置：
+/etc/sysconfig/network-scripts
+
+NetworkManager服务:
+是redhat6自带的检测网络、自动连接网络的图形化工具。NetworkManager 服务会干扰网络配置，如：DNS经常会被刷掉。
+
+systemctl status NetworkManager         ##查看状态
+systemctl status network                ##子程序
+service NetworkManager stop             ##临时关闭
+chkconfig NetworkManager off            ##开机不自动启动
+
+
+配置网络的工具：
+          图形：nm-connection-editor
+          配置文件： vim
+                    nmcli
+
+配置网络参数
+    配置IP
+        配置网卡参数：
+        cp /etc/sysconfig/network-scripts/ifcfg-ens33 .     ##备份
+        vim /etc/sysconfig/network-scripts/ifcfg-ens33    
+        ONBOOT=yes                  ##初始化启动，systemctl start network可以初始化
+        BOOTPROTO=none              ##启动协议，获取IP地址的方式，dhcp自动（VMware自动发）  none手动  static静态
+        IPADDR=192.168.142.131      ##手动配置IP
+        NETMASK=255.255.255.0       ##子网掩码
+        GETWAY=192.168.142.2        ##网关，默认路由
+        DNS1=8.8.8.8                ##域名解析      
+        重启网络服务
+        systemctl restart network        
+        测试工具
+        ip a              ##查看所有IP
+        ip route          ##查看路由
+        ip neigh          ##查看邻居
+        ping 127.0.0.1
+        ping  邻居        ##两台虚拟机的vmnet要相同
+        
+    主机名
+        hostname                            ##查看主机名
+        hostnamectl set-hostname XXX        ##设置主机名
+        /etc/hostname
+        reboot                              ##重启生效
+        
+    端口号
+    
+    初始化服务器
+        为你的服务配置root密码
+        配置IP地址（VMNAT8）
+        配置YUM源
+        关防火墙        
+                systemctl stop firewalld        ##临时关闭
+                systemctl disable firewalld
+                systemctl status firewalld
+        selinux
+                setenfoce 0                     ##临时关闭
+                vim /etc/sysconfig/selinux
+                  SELINUX=disabled              ##永久关闭
+        安装常用程序
+        关机快照
+                快照应该记录已做修改内容，便于以后查看
