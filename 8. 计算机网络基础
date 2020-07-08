@@ -1,7 +1,140 @@
-OSI模型
+1. OSI模型
 
-TCP/IP模型
+1.1 简介
+  Open System Interconnection
+  ISO制定
+  只有理论、没有实践
 
-TCP/IP协议族
+1.2 七层结构
+            应用层：网络服务与用户的一个接口
 
-进制转换
+            表示层：格式、压缩、加密
+
+            会话层：建立、管理、终止会话
+
+            传输层：定义传输数据的协议端口号，流控和差错检验
+
+            网络层：进行逻辑地址寻址，实现不同网络之间的路径选择
+
+            数据链路层：建立逻辑连接、进行硬件地址寻址、差错校验等
+
+            物理层：建立、维护、断开物理连接
+                    
+                    
+1.3 TCP/IP模型
+    transaction control protocol/internet protocol
+    传输控制协议/互联网协议
+    美国军方实践总结
+    当今通信标准
+
+  五层：
+      应用层
+      传输层
+      网络层
+      数据链路层
+      物理层
+      
+1.4 TCP/IP：数据单元/DU
+  DU：DataUnit
+        应用层数据：      AP  DU    
+        传输层数据：      segment DU
+        网络层数据：      packet DU        #包
+        数据链路层数据:   frame DU         #帧
+        物理层数据：      bit du           #比特
+
+1.5 封装和解封装
+                                   数据       应用层
+                         TCP头部   数据       传输层
+                 IP头部  TCP头部   数据       网络层
+        MAC头部  IP头部  TCP头部   数据       数据链路层
+
+        封装的必要参数
+        传输层：     源端口号     目标端口号
+        网络层：     源IP地址     目标IP地址
+        数据链路层： 源MAC地址    目标MAC地址
+
+2. TCP/IP协议族
+            应用层：
+                  HTTP    超文本传输协议
+                  SSH     远程连接协议
+                  FTP     文本传输协议
+                  SMTP    简单邮件传输协议
+                  DNS     域名服务
+            传输层：
+                  UDP
+                  TCP
+            网络层:
+                  IP
+                  ICMP
+                  RIP
+                  OSPF
+                  BGP
+                  VPN
+                  NAT
+            数据链路层:
+                  PPP
+                  CSMA/CD
+         
+3. 物理层
+    信号：模拟信号；数字信号
+    介质：
+          双绞线：
+                  外形：八根线芯，两两互绞
+                  功能：屏蔽线、非屏蔽型
+                  速度分类： cat 5   /5类线/10M100M
+                            cat 5e  /超五类线/10M100M
+                            cat 6
+                  接口：RJ45/水晶头
+                        线序：EIA/TIA568B：橙白，橙，绿白，蓝，蓝白，绿，棕白，棕
+          光纤：
+                  多模/单模
+                  纤芯粗/纤芯细
+                  低速/高速
+                  近/远
+                  便宜/贵
+                  FC/ST/LC/
+                  
+4. 数据链路层
+      信道类型：点对点信道，广播信道
+      地址：             
+            MAC地址（Media Access Control Address）
+                          48位2进制数值
+                          12位16进制数字
+                          前六位是厂商标识
+                          后六位是硬件标识
+      帧封装：           
+            目标MAC//源MAC//类型//数据//CRC
+            
+      交换机工作原理：
+            MAC Address Table
+            学习
+            广播寻址
+            单播
+            更新
+            换机具有动态学习源MAC地址的功能，并且交换机的一个接口可以对应多个MAC地址，但是一个MAC地址只能对应一个接口。
+            交换机动态学习的MAC地址默认只有300S的有效期，如果300S内记录的MAC地址没有通信，则会删除此记录。
+      组件局域网：Cisco Packet Tracer
+                添加主机和交换机
+                连接线缆
+                配置IP和web服务
+                测试通信
+                查看交换机工作原理show mac-address-table
+      VLAN：Virtual Local Area Network
+            虚拟局域网络
+            创建VLAN（2~1024）
+            根据接口和VLAN的关系：
+                              F0/1~F0/10 VLAN 10
+                              F0/11~F0/20 VLAN 20
+            交换机配置：
+                      enable
+                      config t
+                      vlan 10
+                      vlan 20
+                      interface fastethernet0/1
+                      switch access vlan 10
+                      int f0/11
+                      swicth access vlan 20
+                      exit
+      TRUNK：
+
+               
