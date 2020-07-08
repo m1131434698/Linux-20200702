@@ -136,5 +136,7 @@
                       swicth access vlan 20
                       exit
       TRUNK：
+            在同一条线缆上，传递多个VLAN信息
+
 
                
