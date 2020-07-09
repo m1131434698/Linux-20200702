@@ -6,9 +6,42 @@
         控制端口 command 21/tcp
         数据端口 data 20/tcp
    FTP Server 默认配置：
-        安装FTP
-   FTP Client
-   启动上传功能
+        yum -y install vsftpd     ##安装vsftp
+        touch /var/ftp/...        ##准备分发的文件
+        systemctl start vsftpd    ##启动
+        systemctl enable vsftpd   ##开机启动
+        #######关闭防火墙###########
+        systemctl stop firewalld
+        systemctl disable firewalld
+        setenforce 0
+        vim /etc/selinux/config
+           ：SELINUX=disabled      
+        ###########################
+        
+   FTP Client：
+        浏览器：ftp://服务器地址
+        客户端程序1：
+               yum -y install lftp  ##安装客户端工具
+               lftp 服务器的IP地址   ##访问服务器
+               ls                   ##列出目录
+               get abc.txt          ##下载文件
+               mirror pub           ##下载目录
+               exit                 ##退出
+               ##下载的位置：访问服务器时所在的目录##
+        客户端程序2：
+               wget ftp://192.168.192.132/abc.txt    -o /tmp/a.sh     ##下载服务器文件,-o指定文件夹
+
+
+   启动上传功能：
+               vim /etc/vsftpd/vsftpd.conf       ##修改配置文件，修改前建议先备份
+               anonymous_enable=YES              ##启用匿名账户登录 
+               anon_upload_enable=YES            ##启动上传功能
+               anon_mkdir_write_enable=YES       ##启动创建目录的能力
+               mkdir /var/ftp/upload             ##创建上传目录
+               chmod 777 /var/ftp/upload         
+               
+              
+   
     
  
  2. NFS
