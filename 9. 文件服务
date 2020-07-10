@@ -33,14 +33,22 @@
 
 
    启动上传功能：
+              服务器：
                vim /etc/vsftpd/vsftpd.conf       ##修改配置文件，修改前建议先备份
                anonymous_enable=YES              ##启用匿名账户登录 
                anon_upload_enable=YES            ##启动上传功能
                anon_mkdir_write_enable=YES       ##启动创建目录的能力
                mkdir /var/ftp/upload             ##创建上传目录
-               chmod 777 /var/ftp/upload         
+               chmod 777 /var/ftp/upload         ##开启用户权限
+               systemctl restart vsftpd          ##重启服务
                
-              
+              用户：
+               touch 234.txt                     ##首先有一个文件
+               lftp 192.168.192.132              ##进入服务器
+               cd upload/                        ##进入上传目录
+               put 234.txt                       ##上传文件
+               
+                
    
     
  
