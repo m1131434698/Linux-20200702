@@ -53,4 +53,46 @@
     
  
  2. NFS
+Network File System
+网络文件系统，Linux/Unix系统之间共享文件的一种协议
+便于集中文件服务管理
+NFS的客户端主要为Linux
+支持多节点同时挂载以及并发写入
+
+作用：
+   提供文件共享服务
+   为集群中的Web Server配置后端存储
+   
+案例：
+   环境：
+         nas 192.168.122.133      ##提供nfs服务
+         web1 192.168.122.130
+         web2 192.168.122.131
+         web3 192.168.122.132
+         
+   关防火墙:nas web1 web2 web3
+         sed -ri '/^SELINUX=/cSELINUX=disabled' /etc/selinux/config
+         setenforce 0
+         systemctl stop firewalld
+         systemctl disable firewalld
+         
+         
+2.1 nas(存储端）Network Attached Storage
+             yum -y install nfs-utils            ##安装NFS服务器
+             mkdir /webdata                      ##存储网站代码
+             echo "nfs test2020-07-10-CLOUD"  > /webdata/index.html        ##前端工程师的工作
+             vim /ect/exports                    ##配置NFS服务器
+             /webdata     192.168.122.0/24(rw)   ##设置某个IP可以进行读写
+             systemctl start nfs-server          ##启动NFS服务器
+             systemctl enable nfs-server         ##开机启动
+             exportfs -v                         ##报告fs
+2.2 web（客户端）
+             yum -y install nfs-utils httpd      ##安装NFS服务，HTTP网站服务器
+             systemctl start httpd
+             showmount -e 192.168.122.133        ##查询NFS服务器可用目录
+             mount -t nfs 192.168.122.133:/webdata /var/www/html/        ##手动挂载
+             ##umount  /var/www/html/            ##取消挂载
+             df                                  ##查看挂载
+             
  3. SSH
+ ssh root@192.168.142.132                        ##远程登陆
