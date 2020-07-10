@@ -5,9 +5,86 @@ HTML：Hyper Text Makeup Language 超文本标记语言
 URL：Uniform Resource Locator  统一资源定位符
 
 网站架构：
-       Linux+Apache+MySQL+PHP
+       LAMP：Linux+Apache+MySQL+PHP
+              
        
 2. 静态网站
 
-
+       Apache：
+              软件包名称：http
+              服务端口：80/tcp(http)443/tcp(https)
+              配置文件：/etc/httpd/conf/httpd.conf
+              子配置文件：/etc/httpd/conf.d/*.conf
+              yum -y install httpd
+              systemctl start httpd
+              systemctl enable httpd
+              主目录：/var/www/html
+              echo 20200710 > /var/www/html/index.html/               ##设置主页
+       虚拟主机VirtualHost：
+              在一台物理服务器上运行多个网站
+              网站域名：
+                       www.a.org
+                       www.b.org
+              www.a.org            /var/www/html/a.org
+              www.b.org            /b.org
+              服务器：
+                     mkdir /var/www/html/a.org                 ##准备网站源码位置
+                     vim /var/www/html//a.org/index.html/      ##编写主页代码
+                     
+                     vim /etc/httpd/conf.d/a.org.conf   ##创建a.org的网站配置文件
+                     <VirtualHost *:80>
+                     ServerName www.a.org               ##给服务器起名字
+                     DocumentRoot /var/www/html/a.org   ##设置根目录
+                     
+                     vim /etc/httpd/conf.d/b.org.conf   ##创建b.org的网站配置文件
+                     </VirtualHost>
+                     <VirtualHost *:80>   
+                     ServerName www.b.org
+                     DocumentRoot /b.org
+                     </VirtualHost>
+                     <Directory "/b.org:>               ##设置服务器访问目录权限
+                     Required all granted
+                     </Directory>
+                     
+                     httpd -t                           ##检测配置文件语法
+                     systemctl restart httpd            ##重启服务
+              客户端：  
+                     Linux客户端域名解析:
+                     vim /etc/hosts
+                     192.168.168.112  www.a.org
+                     192.168.168.112  www.b.org
+                     Linux客户端测试网站可用性：
+                            字符测试：
+                                   yum -y install elinks
+                                   elink http://www.b.org
+                            图形测试
+              
 3. 动态网站
+       服务器：
+              部署论坛系统discuz
+              yum -y install httpd mariadb-server mariadb php php-mysql gd php-gd          ##安装LAMP环境
+              systemctl start httpd mariadb
+              systemctl enable httpd mariadb
+              wget http://download.comsenz.com/DiscuzX/2.5/Discuz_X2.5_SC_UTF8.zip  
+              mkdir -p  /webroot/discuz
+              unzip Discuz_X2.5_SC_UTF8.zip
+              cp upload/* /webroot/discuz/                                                 ##将解压缩后的文件移动到自创目录
+              chown -R apache.apache /webroot/discuz                                       ##将文件授权给apache
+              vim /etc/httpd/conf.d/discuz.conf
+                     <VirtualHost *:80>
+                     ServerName www.discuz.com
+                     DocumentRoot /webroot/discuz
+                     </VirtualHost>
+                     <Directory "/webroot/discuz">
+                     Required all granted
+                     </Directory>
+              httpd -t
+              systemctl restart httpd
+              mysql                                                                         ##准备数据库
+                     create database discuz;
+                     show database;
+                     
+        客户端：
+              vim /etc/hosts
+                     192.168.168.122 www.discuz.com 
+              浏览器访问www.discuz.com配置数据库
