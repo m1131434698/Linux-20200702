@@ -1,0 +1,33 @@
+AWS实战1：大规模高并发网站
+·怎样处理静态内容？
+        图片
+        视频
+        HTML
+        JavaScript
+        CSS
+          需要海量、高并发、可靠的存储
+          AWS·S3(simple storage service)
+          数据对象由内容和元数据组成
+            ·元数据
+              ·最后修改日期
+              ·内容类型
+              ·用户自定义
+            ·每个对象由键来确定
+            ·存储桶可提供访问控制
+            ·存储桶位于一个区域中
+·我的服务器哪里来？
+        创建虚拟机实例
+        多个服务器并行工作
+        各自独立，相互之间没有干扰
+        如何分流?
+          负载均衡ELB（Elastic Load Balancing）
+·我有多少客户？能否弹性地获得资源
+        AutoScaling弹性伸缩
+        CloudWatch监控服务
+        
+        
+建立移动Web应用
+·HTML5技术
+	HTML静态页面放到S3上——JavaScript调用Ajax传输到AWS Kinesis服务——在S3上的客户页面从Kinesis抓取消息
+·S3作为静态网站服务器
+·你真的需要服务器吗？
