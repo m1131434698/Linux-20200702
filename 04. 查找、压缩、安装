@@ -8,16 +8,16 @@ alias：别名系统
 find /etc -name '1.txt'
 命令  路径  选项  描述
 
-find /etc/ -size +5M                                    ##按大小
-find /  -maxdepth 4 -a -name ifcfg.en*                  ##查找最大深度
-find /home -user user01                                 ##按主人查找
-find /home -group user01                                ##按组查找
-find /dev -type f                                       ##按文件类型查找，linux不以后缀作区分，以文件类型作区分
-find ./ -perm 644 -ls                                   ##按文件权限查找，-ls是动作之一，精确权限
-find /etc -name ifcfg* -ok        -cp -rvf {} /tmp \;   ##找到之后复制文件，-ok为中转符号
+find /etc/ -size +5M                                    # 按大小
+find /  -maxdepth 4 -a -name ifcfg.en*                  # 查找最大深度
+find /home -user user01                                 # 按主人查找
+find /home -group user01                                # 按组查找
+find /dev -type f                                       # 按文件类型查找，linux不以后缀作区分，以文件类型作区分
+find ./ -perm 644 -ls                                   # 按文件权限查找，-ls是动作之一，精确权限
+find /etc -name ifcfg* -ok        -cp -rvf {} /tmp \;   # 找到之后复制文件，-ok为中转符号
 2.  压缩与解压                        
-tar -czf  etc.tar      /etc                             ##压缩文件，z是gzip压缩，j是bzip压缩，J是xzip压缩
-tar -xf  etc.tar                                        ##解压缩
+tar -czf  etc.tar      /etc                             # 压缩文件，z是gzip压缩，j是bzip压缩，J是xzip压缩
+tar -xf  etc.tar                                        # 解压缩
 
 
 3.  安装
@@ -35,32 +35,48 @@ mysql-comunity-cmmon-5.7.12-1.el7.x86_64.rpm
   -编写本地YUM库配置文件
           [root@localhost ~]vim /etc/yum/repos/d/dvd.repo
           [dvd]
-          name=dvd                        ##描述
-          baseurl=file:///mnt/cdrom       ##下载地址，url统一资源定位符
-          gpgcheck=0                      ##关闭校验
-          enable=1                        ##打开开关
+          name=dvd                        # 描述
+          baseurl=file:///mnt/cdrom       # 下载地址，url统一资源定位符
+          gpgcheck=0                      # 关闭校验
+          enable=1                        # 打开开关
           
   -挂载安装光盘
           光盘放到服务器上，通电
-          mount /dev/cdrom  /mnt/cdrom/          ##临时挂载，重启会失效
+          mount /dev/cdrom  /mnt/cdrom/          # 临时挂载，重启会失效
           ls /mnt/cdrom/Packages/ |wc -l
-          vim /root/.bashrc                      ##开机启动项写入挂载，自启动项
+          vim /root/.bashrc                      # 开机启动项写入挂载，自启动项
                   mount /dev/cdrom  /mnt/cdrom/ 
 2、YUM管理RPM包
   -使用YUM安装和卸载程序
-          yum -y install httpd vsftpd             ##全新安装
-          yum -y reinstall httpd                  ##重新安装
-          yum -y update httpd                     ##升级程序
-          yum list httpd                          ##查询
-          yum -y remove httpd                     ##卸载
+          yum -y install httpd vsftpd             # 全新安装
+          yum -y reinstall httpd                  # 重新安装
+          yum -y update httpd                     # 升级程序
+          yum list httpd                          # 查询
+          yum -y remove httpd                     # 卸载
   -模拟客户机访问
   
 3.1.2 RPM工具
 自带，与yum相同，rpm无法处理依赖关系
           cd /mnt/cdrom/Packages/
-          rpm -ivh wget-1.14-15.el7.x86_64.rpm    ##-i安装，v可视，h百分比
-          rpm -q wget                             ##查询
-          rpm -evh wget-1.14-15.el7.x86_64        ##卸载
+          rpm -ivh wget-1.14-15.el7.x86_64.rpm    # -i安装，v可视，h百分比
+          rpm -q wget                             # 查询
+          rpm -evh wget-1.14-15.el7.x86_64        # 卸载
+         
+         
+3.1.3 apt工具(ubuntu)
+advanced packaging tool——高级软件包工具
+/etc/apt/sources.list     # 配置文件
+apt-get [选项] 子命令 包   # 下载 
+                          update：更新
+                          install：下载安装
+                          remove：卸载
+apt-cache 子命令 包       # 查询
+                         search：搜索包
+                         show：显示包详情
+                         depends：查询包依赖
+                         rdepends：查询包被依赖
+                         showpkg：显示包基本信息
+
           
 3.2 源码包管理
 source code，需要经过GCC,C++编译环境编译才能运行，可以设置个人设置，配置复杂
@@ -82,10 +98,10 @@ nginx-1.8.1.tar.gz
 6、安装
           make install
 7、访问
-          systemctl stop  httpd         ##防止tengine与httpd冲突
+          systemctl stop  httpd         # 防止tengine与httpd冲突
           /user/local/nginx/sbin/nginx
-          systemctl stop firewall       ##关闭防火墙
-          http://127.0.0.1              ##使用浏览器访问本机IP，如过出现NGINX的首页，说明部署成功
+          systemctl stop firewall       # 关闭防火墙
+          http://127.0.0.1              # 使用浏览器访问本机IP，如过出现NGINX的首页，说明部署成功
           
           
           
