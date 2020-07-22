@@ -49,15 +49,15 @@ root:		x:		0:					0:			root:		/root:		/bin/bash
 
 1.2.2用户/组管理
 useradd		# 添加用户
-	-u UID 自定义UID （默认系统递增）
-	-o 配合-u 选项，不检查UID的唯一性(不建议)
-	-g GID：指明用户所属基本组，可为组名，也可以GID
-	-c comment 指定一段注释性描述。
-	-d 目录 指定用户主目录，如果此目录不存在，则同时使用-m选项，可以创建主目录。
-	-g 用户组 指定用户所属的用户组。
-	-G 用户组，用户组 指定用户所属的附加组。
-	-s Shell文件 指定用户的登录Shell。
-	-u 用户号 指定用户的用户号，如果同时有-o选项，则可以重复使用其他用户的标识号
+		-u UID 自定义UID （默认系统递增）
+		-o 配合-u 选项，不检查UID的唯一性(不建议)
+		-g GID：指明用户所属基本组，可为组名，也可以GID
+		-c comment 指定一段注释性描述。
+		-d 目录 指定用户主目录，如果此目录不存在，则同时使用-m选项，可以创建主目录。
+		-g 用户组 指定用户所属的用户组。
+		-G 用户组，用户组 指定用户所属的附加组。
+		-s Shell文件 指定用户的登录Shell。
+		-u 用户号 指定用户的用户号，如果同时有-o选项，则可以重复使用其他用户的标识号
 userdel		# 删除用户，-r把主目录一起删除
 usermod		# 修改用户信息
 id		# 查看指定用户
@@ -98,41 +98,44 @@ sudo		# 临时提权
 
 1.3.2基本权限ACL(access control list）
 
-getfacl	/home/test.txt
-setfavl		-m	g:user01:rwx
-		-x（删除某用户acl）
-		-b（删除全部acl）
-watch -n1 'ls -dl /tmp/file1'
-
+getfacl				# 查看ACL权限
+setfavl				# 设定ACL权限
+				-m：设定 ACL 权限。如果是给予用户 ACL 权限，则使用"u:用户名：权限"格式赋予；如果是给予组 ACL 权限，则使用"g:组名：权限" 格式赋予；
+				-x：删除指定的 ACL 权限；
+				-b：删除所有的 ACL 权限；
+	
 1.3.3特殊权限
-suid
+
+suid	# SUID 权限仅对二进制可执行文件有效
+	# 如果执行者对于该二进制可执行文件具有 x 的权限，执行者将具有该文件的所有者的权限
+	# 本权限仅在执行该二进制可执行文件的过程中有效
 chmod	u+s	file1
-sgid
+sgid	# 用户若对此目录具有 r 和 x 权限，该用户能够进入该目录
+	# 用户在此目录下的有效用户组将变成该目录的用户组
+	# 若用户在此目录下拥有 w 权限，则用户所创建的新文件的用户组与该目录的用户组相同
 chmod	g+s	file1
-sticky
+sticky	# SBIT 目前只对目录有效，用来阻止非文件的所有者删除文件。
 chmod	o+t	file1
-查看特殊权限
-lsattr
-设置特殊权限
-chattr	+i     #锁定文件，不能编辑，不能修改，不能删除，不能移动，可以执行
-    	+a     #仅可以追加文件，不能编辑，不能删除，不能移动，可以执行
+
+lsattr		# 查看特殊权限
+chattr		# 设置特殊权限
+		+i     #锁定文件，不能编辑，不能修改，不能删除，不能移动，可以执行
+		+a     #仅可以追加文件，不能编辑，不能删除，不能移动，可以执行
+	
 进程掩码umask
 umask涉及到的相关文件/etc/bashrc /etc/profile ~/.bashrc ~/.bash_profile
 
 1.4进程管理
 1.4.1进程管理
-进程组成部分：一个文件；已分配内存的地址空间；安全属性，包括所有权凭据和特权；程序代码的一个或多个副本（执行线程）；进程状态
 
-程序————————进程
-硬盘		  内存
-		  内存资源、CPU资源（时间分片）、网络资源……
+ps（process status）	# 静态查看进程
+			-a：显示当前终端的所有进程信息
+			-u：以用户的形式显示进程信息
+			-x：显示后台进程运行的参数
+			-ef：查看父进程
 
-
-进程状态管理器
-静态查看进程
-ps（process status）	-A	-a	-u	aux	-ef（PID、PPID父进程PID）
-USER		PID	CPU	MEM		VSZ		RSS	TTY		STAT	START		TIME		COMMAND
-进程拥有者	进程ID	占用率	内存占用率	虚拟内存占用大小	内存占用	运行终端的号码	进程状态	进程开始时间	累计使用CPU时间	进程文件，进程名
+USER	     PID	CPU	MEM		VSZ		RSS		TTY		STAT	START		TIME		COMMAND
+进程拥有者	进程ID	占用率	内存占用率	虚拟内存占用大小	内存占用	运行终端的号码	  进程状态	进程开始时间	累计使用CPU时间	进程文件，进程名
 
 进程排序
 [root@localhost~]# ps aux --sort %cpu |less
@@ -155,8 +158,12 @@ STAT状态
       R+      +表示是前台的进程组
       Sl     以线程的方式运行    
 
-动态查看进程
-top
+top		# 动态查看进程
+		-c：显示完整的命令
+		-d：屏幕刷新间隔时间
+		-p 进程号：指定进程
+		-n 次数：循环显示的次数
+
 top - 09:34:37 up 10:06,  2 users,  load average: 0.05, 0.04, 0.05
 程序名-系统事件 运行时间 登录用户数 CPU负载：5 10 15分钟
 Tasks: 211 total,   2 running, 209 sleeping,   0 stopped,   0 zombie
@@ -167,10 +174,10 @@ KiB Mem :   995684 total,    81388 free,   670160 used,   244136 buff/cache
 物理内存
 KiB Swap:  2097148 total,  1985788 free,   111360 used.   139676 avail Mem 
 交换分区
-PID	USER	PR	NI	VIRT	RES	SHR	S	%CPU	%MEM	TIME+	COMMAND
-		优先级	优先级	内		   存	状态			
+PID	USER	PR	  NI		VIRT	RES	SHR	S	%CPU	%MEM	TIME+	COMMAND
+		优先级	优先级	   内		   存	状态			
 
-进程优先级nice
+nice	-n	进程优先级	进程端口号/进程名	# 更改进程优先级
 
 使用信号控制进程
 kill、killall、pkill、stop
